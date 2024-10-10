@@ -102,6 +102,8 @@ if uploaded_files:
     documents.extend(text)
 
 task_output = ""
+context = ""
+res = ""
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
