@@ -1,0 +1,8 @@
+langchain-core
+langchain-groq
+streamlit
+langchain-community
+langchain-openai
+langchain-google-vertexai
+pymupdf4llm
+faiss-cpu
