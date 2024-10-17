@@ -18,8 +18,8 @@ os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
 
 st.title("Output")
 st.sidebar.title("Canvas Chatbot")
-llm = ChatGroq(model="llama3-70b-8192")
-# llm = VertexAI(model_name="gemini-1.5-flash")
+# llm = ChatGroq(model="llama3-70b-8192")
+llm = VertexAI(model_name="gemini-1.5-flash")
 
 class Output(BaseModel):
     output: dict[str,str] = Field(description="dictionary containing the chat text and task output.")
