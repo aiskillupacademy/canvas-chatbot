@@ -7,3 +7,4 @@ langchain-google-vertexai
 langchain-google-genai
 pymupdf4llm
 faiss-cpu
+streamlit-mic-recorder
