@@ -3,6 +3,7 @@ import os
 from langchain_groq import ChatGroq
 import tempfile
 import streamlit as st
+from streamlit_mic_recorder import speech_to_text
 from langchain.docstore.document import Document
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -12,14 +13,17 @@ from pydantic import BaseModel, Field
 from langchain_google_vertexai import VertexAI
 from langchain.output_parsers import PydanticOutputParser
 import pymupdf4llm
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
+os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 
 st.title("Output")
 st.sidebar.title("Canvas Chatbot")
 # llm = ChatGroq(model="llama3-70b-8192")
-llm = VertexAI(model_name="gemini-1.5-flash")
+# llm = VertexAI(model_name="gemini-1.5-flash")
+llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
 
 class Output(BaseModel):
     output: dict[str,str] = Field(description="dictionary containing the chat text and task output.")
@@ -104,6 +108,7 @@ if uploaded_files:
 task_output = ""
 context = ""
 res = ""
+user_input = ""
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -115,8 +120,32 @@ with st.sidebar:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button('Add Emoji'):
+            user_input = "Add emojis"
+
+    with col2:
+        if st.button('Increase Length'):
+            user_input = "Increase the length"
+
+    with col3:
+        if st.button('Decrease Length'):
+            user_input = "Decrease the length"
+    
+    text = None
+    text = speech_to_text(
+            just_once=False,
+            key='recorder'
+        )
+    audio = st.button("Send Audio")
+    txt_input = st.chat_input("Ask a question")
+    if audio:
+        user_input = text
+    elif txt_input:
+        user_input = txt_input
     # React to user input
-    if user_input := st.chat_input("Ask a question"):
+    if user_input:
         # Display user message in chat message container
         st.chat_message("user").markdown(user_input)
         # Add user message to chat history
